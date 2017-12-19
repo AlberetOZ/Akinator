@@ -3,38 +3,38 @@
 #include <string.h>
 #include <cassert>
 #include <iostream>
+#define MAX_LINE 100
 
 const static int CANARY = rand() % (time(0)) + 1;
 
-typedef int Data;
+typedef char* Data;
 
 class  Node
 {
 private:
 	int canary1 = CANARY;
-	Data value;		 //      данные в узле	
-	class Node* left;	 //      левая ветвь
-	class Node* right;	 //      правая ветвь
-	class Node* prev;	 //	 предыдуший узел
+	Data value;				 //      данные в узле	
+	class Node* left;			 //      левая ветвь
+	class Node* right;			 //      правая ветвь
+	class Node* prev;			 //	 предыдуший узел
 public:
-	Node();			 //	конструктор
-	~Node();		 //	деструктор
+	Node();					 //	конструктор
+	~Node();				 //	деструктор
 
-	void Begin_Akinator();	 //	ну, собственно, самое важное в данной проге
-	void F_Akinator();	 //     ну, собственно, самое важное в данной проге
+	void Begin_Akinator();			 //	ну, собственно, самое важное в данной проге
+	void F_Akinator();			 //     ну, собственно, самое важное в данной проге
 
-	void Check();		 //	проверка дерева
-	void add(Data);		 //	добавить ветку, уже существующее значение не добавляется
+	void Check();				 //	проверка дерева
+	void add(Data);				 //	добавить ветку, уже существующее значение не добавляется
 
-	void print();		 //	печать базы акинатора в файл
-	void print_step(FILE*);	 //	шаг печати узла дерева
-	void scan(class Node*);		 //	считывание из файла базы акинатора
+	void print();				 //	печать базы акинатора в файл
+	void print_step(FILE*);			 //	шаг печати узла дерева
+	void scan(class Node*);			 //	считывание из файла базы акинатора
 	void scan_step(FILE*, class Node*);	 //	шаг считывания узла дерева	
 
-	void reset();		 //	обнуление(сброс) дерева
-	size_t mass();		 //	колво узлов дерева
-	void dump();		 //	печать дерева через Dot
-	void dump_in_file(FILE*);//	вывод дерева в файл dota2 на языкке dot
+	size_t mass();				 //	колво узлов дерева
+	void dump();				 //	печать дерева через Dot
+	void dump_in_file(FILE*);		 //	вывод дерева в файл dota2 на языкке dot
 private:
 	int canary2 = CANARY;
 };
@@ -45,7 +45,8 @@ void Node::Check()
 	assert(canary1 == CANARY);
 	assert(canary2 == CANARY);	
 	
-	assert(&value);
+	assert(value);
+
 	if(left != NULL)
 		(*left).Check();
 	if(right != NULL)
@@ -56,7 +57,7 @@ void Node::Check()
 
 Node::Node ()
 {
-	value = 0;
+	value = (char*)calloc(1, MAX_LINE);
 	left = NULL;
 	right = NULL;
 	prev = NULL;
@@ -75,31 +76,39 @@ void Node::Begin_Akinator()
 	for(; i == 0; )
 	{
 		
-		printf("Начнем? (Y/N)\n");
+		printf("Начнем? (Д/Н)\n");
 
 		scanf("%s", start);
 
 		 
-		if(start[0] == 'Y')
+		if(start[1] == "Д"[1])
 		{
 			Node::Check();
 			Node::F_Akinator();
 
 
 		}
-		if(start[0] == 'N')
+		if(start[1] == "Н"[1])
 		{
 			i++;
 			printf("Я уверен, ты все равно вернешься в эту проклятую игру...\n");
 
 		}
-		if((start[0] != 'Y') && (start[0] != 'N'))
+		if((start[1] != "Д"[1]) && (start[0] != "Н"[1]))
 			 printf("Пасхалок нет, выбирай что дают\n");
 
 
 	}
 
 	printf("Прощааай\n");
+
+	Node::Check();
+
+	Node::print();
+
+	Node::dump();
+
+	exit(0);
 
 }
 
@@ -109,7 +118,7 @@ void Node::F_Akinator()
 	if((right == NULL) && (left == NULL))
 	{
 		char end[] = {0};
-		printf("GGWP, ты загадал: %d\nЯ прав? (Y/N)\n", value);
+		printf("GGWP, ты загадал: %s\nЯ прав? (Д/Н)\n", value);
 		int i = 0;
 		for(i = 0; i == 0;)
 		{
@@ -117,24 +126,24 @@ void Node::F_Akinator()
 			scanf("%s", end);
 
 		 
-			if(end[0] == 'Y')
+			if(end[1] == "Д"[1])
 			{
 				printf("GG EZ, даже не прочувствовал, давай еще одну\n");	
 				i++;
 			}
-			if(end[0] == 'N')
+			if(end[1] == "Н"[1])
 			{
-				int temp = 0;
+				char temp[100] = {0};
 				i++;
 				printf("А ты сильный игрок, скажи что ты загадал\n");
 
-				scanf("%d", &temp);
+				scanf("%s", temp);
 
 				Node::add(temp);
 				Node::Check();
 			}
-			if((end[0] != 'Y') && (end[0] != 'N'))
-				 printf("Пасхалок нет,сколько тебе повторять, тыкай в Y или N\n");
+			if((end[1] != "Д"[1]) && (end[1] != "Н"[1]))
+				 printf("Пасхалок нет,сколько тебе повторять, тыкай в Да или Нет\n");
 
 
 		}
@@ -144,23 +153,23 @@ void Node::F_Akinator()
 		char step[] = {0};
 		int i = 0;
 
-		printf("То что ты загадал %d? (Y/N)\n", value);
+		printf("То что ты загадал %s? (Д/Н)\n", value);
 		
 		for(i = 0; i == 0;)
 		{
 			scanf("%s", step);
 
-			if(step[0] == 'Y')
+			if(step[1] == "Д"[1])
 			{
 				(*left).F_Akinator();
 				i++;
 			}
-			if(step[0] == 'N')
+			if(step[1] == "Н"[1])
 			{
 				(*right).F_Akinator();
 				i++;
 			}
-			if((step[0] != 'N') && (step[0] != 'Y'))
+			if((step[1] != "Н"[1]) && (step[1] != "Д"[1]))
 			{
 
 				printf("Пасхалки скоро будут, для этого нужны лишь ваши донаты, всего то в размере 100 биткоинов))\n");
@@ -187,24 +196,6 @@ size_t Node::mass()
 	return mas;
 }
 
-void Node::reset()
-{
-	if(left != NULL)
-	{
-		(*left).~Node();
-		free(left);
-	}
-	if(right != NULL)
-	{
-		(*right).~Node();
-		free(right);
-	}
-	value = 0;
-	left = NULL;
-	right = NULL;
-	Node::Check();
-
-}
 
 void Node::add(Data input)
 {
@@ -213,23 +204,24 @@ void Node::add(Data input)
 	right = (Node*)calloc(1, sizeof(class Node));
 	right -> canary1 = CANARY;
 	right -> canary2 = CANARY;
-	right -> value = value;
+	right -> value = (char*)calloc(1, MAX_LINE);
+	stpcpy(right -> value, value);
 	(*right).Check();
 
-	printf("Чем загаданное отличается от %d?", value);
+	printf("Чем загаданное отличается от %s?\n", value);
 
-	scanf("%d", &value);
+	scanf("%s", value);
 
 	left = (Node*)calloc(1, sizeof(class Node));
 	left -> canary1 = CANARY; 
 	left -> canary2 = CANARY; 
-	left -> value = input;
+	left -> value = (char*)calloc(1, MAX_LINE);
+	stpcpy(left -> value, input);
 	(*left).Check();
 
 	printf("База обновлена, теперь то я тебя раскатаю\n");
 
 	Node::Check();
-	Node::dump();
 }
 
 void Node::print()
@@ -250,7 +242,7 @@ void Node::print()
 void Node::print_step(FILE* data)
 {
 
-	fprintf(data, "( %d ", value);
+	fprintf(data, "( %s ", value);
 	
 	
 
@@ -275,7 +267,7 @@ void Node::scan(class Node* root)
 
 	char temp = '\0';	
 
-	fscanf(data, "%c%d",  &temp,  &value); 
+	fscanf(data, "%c%s",  &temp,  value); 
 
 	Node::scan_step(data, root);
 
@@ -292,7 +284,6 @@ void Node::scan_step(FILE* data, class Node* root)
 
 	fscanf(data, "%c%c", &step, &step);
 	
-	printf("$$$$$|%c|$", step);
 	if(step == '(')
 	{
 		if(left == NULL)
@@ -302,6 +293,7 @@ void Node::scan_step(FILE* data, class Node* root)
 			left -> canary1 = CANARY;
 			left -> canary2 = CANARY;
 			left -> prev = root; 
+			left -> value = (char*)calloc(1, MAX_LINE);
 			(*left).Check();
 
 
@@ -315,23 +307,22 @@ void Node::scan_step(FILE* data, class Node* root)
 			right -> canary1 = CANARY;
 			right -> canary2 = CANARY;
 			right -> prev = root;
+			right -> value = (char*)calloc(1, MAX_LINE);
 			(*right).Check();
 			(*right).scan_step(data, right);
 		}
 	}
-	else if((step >= '0') && ( step <= '9'))
-	{
-		ungetc(step, data);
-		fscanf(data, "%d", &value);
-		Node::scan_step(data, root);
-
-	}
 	else if(step == ')')
 		(*prev).scan_step(data, prev);
 	else if(step == '$')
-		ungetc(step,data);
-	else if(step != '$')
+		ungetc(step , data);
+	else
+	{
+		ungetc(step, data);
+		fscanf(data, "%s", value);
 		Node::scan_step(data, root);
+
+	}
 	
 }
 
@@ -357,15 +348,15 @@ void Node::dump()
 
 void Node::dump_in_file(FILE* dota)
 {
-	fprintf(dota, "\t%d[color = \"#%6d\"] [fillcolor = \"#%6d\"][fontcolor = red] ;\n", value, rand() % (899998 - 0) + 100000, rand() % (899998 - 0)+ 100000);
+	fprintf(dota, "\t%s[color = \"#%6d\"] [fillcolor = \"#%6d\"][fontcolor = red] ;\n", value, rand() % (899998 - 0) + 100000, rand() % (899998 - 0)+ 100000);
 	if(left != NULL)
 	{
-		fprintf(dota, "\t%d -> %d[color = \"#%6d\"] [fillcolor = \"#%6d\"] ;\n", value, left -> value, rand() % (899998 - 0)+ 100000, rand() % (899998 - 0)+ 100000);
+		fprintf(dota, "\t%s -> %s[color = \"#%6d\"] [fillcolor = \"#%6d\"] ;\n", value, left -> value, rand() % (899998 - 0)+ 100000, rand() % (899998 - 0)+ 100000);
 		(*left).dump_in_file(dota);
 	}
 	if(right != 0)
 	{
-		fprintf(dota, "\t%d -> %d[color = \"#%6d\"] [fillcolor = \"#%6d\"] ;\n", value, right -> value, rand() % (899998 - 0)+ 100000, rand() % (899998 - 0)+ 100000);
+		fprintf(dota, "\t%s -> %s[color = \"#%6d\"] [fillcolor = \"#%6d\"] ;\n", value, right -> value, rand() % (899998 - 0)+ 100000, rand() % (899998 - 0)+ 100000);
 		(*right).dump_in_file(dota);
 	}
 
@@ -376,6 +367,8 @@ void Node::dump_in_file(FILE* dota)
 Node::~Node()
 {
 	Node::Check();	
+
+	free(value);
 
 	if(left != NULL)
 	{
@@ -388,7 +381,6 @@ Node::~Node()
 		free(right);
 
 	}
-	//free(value);
 }
 
 
@@ -405,9 +397,9 @@ int main()
 
 	Akinator.Begin_Akinator();	
 
-	Akinator.print();
+	//Akinator.print();
 
-	Akinator.dump();
+	//Akinator.dump();
 
 	return 0;
 }
