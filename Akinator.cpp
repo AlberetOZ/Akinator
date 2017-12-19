@@ -88,13 +88,13 @@ void Node::Begin_Akinator()
 
 
 		}
-		if(start[1] == "Н"[1])
+		else if(start[1] == "Н"[1])
 		{
 			i++;
 			printf("Я уверен, ты все равно вернешься в эту проклятую игру...\n");
 
 		}
-		if((start[1] != "Д"[1]) && (start[0] != "Н"[1]))
+		else if((start[1] != "Д"[1]) && (start[0] != "Н"[1]))
 			 printf("Пасхалок нет, выбирай что дают\n");
 
 
@@ -108,7 +108,7 @@ void Node::Begin_Akinator()
 
 	Node::dump();
 
-	exit(0);
+	//exit(0);
 
 }
 
@@ -131,7 +131,7 @@ void Node::F_Akinator()
 				printf("GG EZ, даже не прочувствовал, давай еще одну\n");	
 				i++;
 			}
-			if(end[1] == "Н"[1])
+			else if(end[1] == "Н"[1])
 			{
 				char temp[100] = {0};
 				i++;
@@ -142,7 +142,7 @@ void Node::F_Akinator()
 				Node::add(temp);
 				Node::Check();
 			}
-			if((end[1] != "Д"[1]) && (end[1] != "Н"[1]))
+			else if((end[1] != "Д"[1]) && (end[1] != "Н"[1]))
 				 printf("Пасхалок нет,сколько тебе повторять, тыкай в Да или Нет\n");
 
 
@@ -164,12 +164,12 @@ void Node::F_Akinator()
 				(*left).F_Akinator();
 				i++;
 			}
-			if(step[1] == "Н"[1])
+			else if(step[1] == "Н"[1])
 			{
 				(*right).F_Akinator();
 				i++;
 			}
-			if((step[1] != "Н"[1]) && (step[1] != "Д"[1]))
+			else if((step[1] != "Н"[1]) && (step[1] != "Д"[1]))
 			{
 
 				printf("Пасхалки скоро будут, для этого нужны лишь ваши донаты, всего то в размере 100 биткоинов))\n");
@@ -386,6 +386,7 @@ Node::~Node()
 
 int main()
 {
+	srand(time(0));
 
 	size_t temp;
 
@@ -396,10 +397,6 @@ int main()
 	Akinator.dump();
 
 	Akinator.Begin_Akinator();	
-
-	//Akinator.print();
-
-	//Akinator.dump();
 
 	return 0;
 }
