@@ -27,9 +27,9 @@ public:
 	void Check();				 //	проверка дерева
 	void add(Data);				 //	добавить ветку, уже существующее значение не добавляется
 
-	void print();				 //	печать базы акинатора в файл
+	void print(char*);				 //	печать базы акинатора в файл
 	void print_step(FILE*);			 //	шаг печати узла дерева
-	void scan(class Node*);			 //	считывание из файла базы акинатора
+	void scan(class Node*, char*);			 //	считывание из файла базы акинатора
 	void scan_step(FILE*, class Node*);	 //	шаг считывания узла дерева	
 
 	size_t mass();				 //	колво узлов дерева
@@ -69,9 +69,26 @@ Node::Node ()
 
 void Node::Begin_Akinator()
 {
-	printf("Ну, здравствуй, мой друг))\nДавай сыграем в одну игру, тебе же есть 18?\n");
-	
 	int i = 0;
+	
+	printf("Ну, здравствуй, мой друг))\nДавай сыграем в одну игру, тебе же есть 18?\n");
+
+	char file[] = {0};
+	for (; ; )
+	{
+		printf("Из какого файла брать базу данных?\n");
+
+		scanf("%s", file);
+
+		if(fopen(file, "r") == NULL)
+			printf("Нет такого файла\n");
+		else
+		{
+			break;
+		}
+	}
+	Node::scan(this, file);
+	
 	char start[] = {0};
 	for(; i == 0; )
 	{
@@ -104,11 +121,11 @@ void Node::Begin_Akinator()
 
 	Node::Check();
 
-	Node::print();
+	Node::print(file);
 
 	Node::dump();
 
-	//exit(0);
+	exit(0);
 
 }
 
@@ -224,9 +241,9 @@ void Node::add(Data input)
 	Node::Check();
 }
 
-void Node::print()
+void Node::print(char* file)
 {
-	FILE* data = fopen("data", "w");
+	FILE* data = fopen(file, "w");
 
 	assert(data);
 
@@ -258,10 +275,10 @@ void Node::print_step(FILE* data)
 
 
 
-void Node::scan(class Node* root)
+void Node::scan(class Node* root, char* file)
 {
 
-	FILE* data = fopen("data", "r");
+	FILE* data = fopen(file, "r");
 
 	assert(data);
 
@@ -391,10 +408,6 @@ int main()
 	size_t temp;
 
 	Node Akinator;
-
-	Akinator.scan(&Akinator);
-
-	Akinator.dump();
 
 	Akinator.Begin_Akinator();	
 
